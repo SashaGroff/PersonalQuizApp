@@ -7,23 +7,41 @@
 
 import UIKit
 
-class ResultViewController: UIViewController {
-
+final class ResultViewController: UIViewController {
+    
+     // MARK: - IB Outlets
+    @IBOutlet var resultAnimalLabel: UILabel!
+    @IBOutlet var aboutAnimalLabel: UILabel!
+    
+     // MARK: - Public Properties
+    var answersChosen: [Answer]!
+    
+     // MARK: - View Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        navigationItem.hidesBackButton = true
+        
+        getResult()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+     // MARK: - IB Action
+    @IBAction func doneButtonPressed(_ sender: UIBarButtonItem) {
+        dismiss(animated: true)
     }
-    */
-
+    
+    // MARK: - Private Methods
+    private func getResult() {
+        var animalCount: [Animal: Int] = [:]
+        let animals = answersChosen.map { $0.animal }
+        
+        for animal in animals {
+            animalCount[animal] = (animalCount[animal] ?? 0) + 1
+        }
+        
+        let sortedAnimalCount = animalCount.sorted { $0.value > $1.value }
+        guard let sortedAnimal = sortedAnimalCount.first?.key else { return }
+        
+        resultAnimalLabel.text = "Вы - \(sortedAnimal.rawValue)"
+        aboutAnimalLabel.text = " \(sortedAnimal.defenition)"
+    }
 }
